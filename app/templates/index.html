@@ -5,5 +5,26 @@
 {% block page_content %}
 <div class="page-header">
     <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
+    {% if current_user.is_authenticated %}
+         <h1>Relação de usuários cadastrados</h1>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>Nome do usuário</th>
+                    <th>Função</th>
+                    <th>Confirmação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email}}</td>
+                    <td>{{ user.confirmed }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 </div>
 {% endblock %}

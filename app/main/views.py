@@ -1,7 +1,10 @@
 from flask import render_template
+from ..models import User
 from . import main
 
 
-@main.route('/')
+
+@main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    users=User.query.all()
+    return render_template('index.html', users=users)
