@@ -4,6 +4,24 @@ from flask import current_app
 from flask_login import UserMixin
 from . import db, login_manager
 
+class Semestre(db.Model):
+    __tablename__ = 'semestres'
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(32), unique=True, nullable=False)
+    disciplinas = db.relationship('Disciplina', backref='semestre', lazy='dynamic')
+
+    def __repr__(self):
+        return f'<Semestre {self.nome}>'
+
+
+class Disciplina(db.Model):
+    __tablename__ = 'disciplinas'
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(128), nullable=False)
+    semestre_id = db.Column(db.Integer, db.ForeignKey('semestres.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Disciplina {self.nome}>'
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -35,9 +53,9 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def generate_confirmation_token(self, expiration=3600):        
+    def generate_confirmation_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'])
-        return s.dumps({'confirm': self.id})        
+        return s.dumps({'confirm': self.id})
 
     def confirm(self, token):
         s = Serializer(current_app.config['SECRET_KEY'])
